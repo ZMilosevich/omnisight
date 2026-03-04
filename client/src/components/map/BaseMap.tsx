@@ -457,7 +457,18 @@ const BaseMap: React.FC<BaseMapProps> = ({ entities, socket }) => {
                       <span class="text-white font-medium">${Math.floor(Math.random() * 500 + 300)} kts</span>
                   </div>`
                 : entity.type === 'vessel'
-                    ? `   <div class="flex justify-between items-center text-[10px] font-mono">
+                    ? `   
+                  <div class="mb-3 relative overflow-hidden rounded border border-white/20 shadow-[0_4px_10px_rgba(0,0,0,0.5)] bg-black/50" style="height: 100px;">
+                      <img src="${[
+                        'https://images.unsplash.com/photo-1545087593-199afb2f56b5?q=80&w=400&h=200&auto=format&fit=crop',
+                        'https://images.unsplash.com/photo-1588693836856-42ea2ea82470?q=80&w=400&h=200&auto=format&fit=crop',
+                        'https://images.unsplash.com/photo-1605273934399-5632a4e2baaa?q=80&w=400&h=200&auto=format&fit=crop',
+                        'https://images.unsplash.com/photo-1520692751336-3985eeb4e7eb?q=80&w=400&h=200&auto=format&fit=crop',
+                        'https://images.unsplash.com/photo-1578330541740-9b43ed3470cc?q=80&w=400&h=200&auto=format&fit=crop'
+                    ][(entity.id || '').split('').reduce((a, b) => a + b.charCodeAt(0), 0) % 5]}" class="w-full h-full object-cover filter brightness-75 contrast-110" />
+                      <div class="absolute bottom-1 right-1 bg-black/80 px-1 py-0.5 text-[8px] font-mono text-white/50 border border-white/10 rounded">AIS DB FEED</div>
+                  </div>
+                  <div class="flex justify-between items-center text-[10px] font-mono mt-2">
                       <span class="text-white/30 uppercase tracking-tighter">Speed</span>
                       <span class="text-white font-medium">${Math.floor(Math.random() * 20 + 5)} kts</span>
                   </div>
