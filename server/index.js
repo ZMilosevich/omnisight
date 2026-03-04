@@ -12,14 +12,14 @@ const { OperativeService } = require('./services/operative');
 
 const app = express();
 app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:5173",
+  origin: [process.env.CLIENT_URL, "http://localhost:5173", "https://omnisight-iota.vercel.app"].filter(Boolean),
   credentials: true
 }));
 
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: [process.env.CLIENT_URL, "http://localhost:5173", "https://omnisight-iota.vercel.app"].filter(Boolean),
     methods: ["GET", "POST"],
     credentials: true
   }
