@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+}
+
+.glass {
+  background: rgba(18, 18, 18, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Tactical Mapbox Popup Overrides */
+.tactical-popup {
+  max-width: none !important;
+  z-index: 9999 !important;
+}
+
+.mapboxgl-popup-content {
+  background: rgba(10, 10, 10, 0.85) !important;
+  backdrop-filter: blur(8px);
+  color: white !important;
+  /*border: 1px solid rgba(255, 255, 255, 0.1);*/
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+  padding: 0 !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+
+.mapboxgl-popup-tip {
+  border-top-color: rgba(10, 10, 10, 0.85) !important;
+  border-bottom-color: rgba(10, 10, 10, 0.85) !important;
+}
+
+/* Global Dark Theme for Mapbox Controls */
+.mapboxgl-ctrl-group {
+  background-color: #111111 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.mapboxgl-ctrl-group button {
+  background-color: transparent !important;
+  border: none !important;
+}
+
+/* Standard Mapbox Icons */
+.mapboxgl-ctrl-group button span {
+  filter: invert(1) brightness(2) !important;
+}
+
+/* Mapbox Draw Icons (Inverted to White) */
+.mapboxgl-ctrl-group button[class*="mapbox-gl-draw"] {
+  filter: invert(1) brightness(0.75) !important;
+}
+
+.mapboxgl-ctrl-group button:hover {
+  background-color: #222222 !important;
+}
+
+.mapboxgl-ctrl-group button:not(:last-child) {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
