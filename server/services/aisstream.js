@@ -7,6 +7,8 @@ class AisStreamService {
         this.apiKey = process.env.AISSTREAM_API_KEY;
         this.boundingBox = null; // [[[lat, lng], [lat, lng]]]
         this.reconnectTimeout = null;
+        this.mockInterval = null;
+        this.mockVessels = [];
     }
 
     start(latMin, lngMin, latMax, lngMax) {
@@ -14,11 +16,26 @@ class AisStreamService {
         this.boundingBox = [[[latMin, lngMin], [latMax, lngMax]]];
 
         if (!this.apiKey) {
-            console.warn('AISSTREAM_API_KEY is missing.');
+            console.warn('AISSTREAM_API_KEY is missing. Falling back to mock data simulation entirely.');
+            this.startMocking();
             return;
         }
 
         this.connect();
+
+        // Even if we connect, we should ensure some mock data exists to prove the connection state if the real feed is silent
+        this.startMocking();
+    }
+
+    startMocking() {
+        if (this.mockInterval) clearInterval(this.mockInterval);
+        this.mockVessels = []; // Reset on new area
+
+        // Generate initial batch
+        this.generateMockData();
+
+        // Loop simulation
+        this.mockInterval = setInterval(() => this.generateMockData(), 15000);
     }
 
     connect() {
@@ -77,6 +94,11 @@ class AisStreamService {
 
     stop() {
         this.boundingBox = null;
+        this.mockVessels = [];
+        if (this.mockInterval) {
+            clearInterval(this.mockInterval);
+            this.mockInterval = null;
+        }
         if (this.reconnectTimeout) {
             clearTimeout(this.reconnectTimeout);
             this.reconnectTimeout = null;
@@ -85,6 +107,52 @@ class AisStreamService {
             this.ws.terminate();
             this.ws = null;
         }
+    }
+
+    generateMockData() {
+        if (!this.boundingBox || !this.boundingBox[0]) return;
+
+        const [[latMin, lngMin], [latMax, lngMax]] = this.boundingBox[0];
+
+        // Seed initial vessels if empty
+        if (this.mockVessels.length === 0) {
+            for (let i = 0; i < 5; i++) {
+                this.mockVessels.push({
+                    id: `vessel-mock-${9000 + i}`,
+                    callsign: `NAV-M-${Math.floor(Math.random() * 90) + 10}`,
+                    lat: latMin + (latMax - latMin) * Math.random(),
+                    lng: lngMin + (lngMax - lngMin) * Math.random(),
+                    heading: Math.random() * 360,
+                    speed: (latMax - latMin) * 0.005 // Slower than planes
+                });
+            }
+        }
+
+        this.mockVessels.forEach(vessel => {
+            // Very slow, deliberate movement
+            vessel.lat += Math.cos(vessel.heading * (Math.PI / 180)) * vessel.speed;
+            vessel.lng += Math.sin(vessel.heading * (Math.PI / 180)) * vessel.speed;
+            vessel.heading += (Math.random() - 0.5) * 2; // Slight drift
+
+            // Boundary bouncing
+            if (vessel.lat > latMax || vessel.lat < latMin || vessel.lng > lngMax || vessel.lng < lngMin) {
+                vessel.heading = (vessel.heading + 180) % 360;
+                // Force back inside to prevent getting permanently stuck on edge
+                vessel.lat = Math.max(latMin, Math.min(latMax, vessel.lat));
+                vessel.lng = Math.max(lngMin, Math.min(lngMax, vessel.lng));
+            }
+
+            this.io.emit('entity-update', {
+                id: vessel.id,
+                type: 'vessel',
+                lat: vessel.lat,
+                lng: vessel.lng,
+                callsign: vessel.callsign,
+                heading: vessel.heading,
+                route: 'Maritime Patrol',
+                timestamp: Date.now()
+            });
+        });
     }
 }
 
