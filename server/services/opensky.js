@@ -4,7 +4,6 @@ class OpenSkyService {
     constructor(io) {
         this.io = io;
         this.interval = null;
-        this.mockPlanes = [];
         this.bounds = null; // { lamin, lomin, lamax, lomax }
     }
 
@@ -41,56 +40,12 @@ class OpenSkyService {
                     return;
                 }
             } catch (error) {
-                console.log('OpenSky API offline or rate limited. Using fallback.');
+                console.log('OpenSky API offline or rate limited. Waiting for next polling cycle.');
             }
-
-            // Fallback Simulation logic
-            this.generateMockData();
         };
 
         fetchOpenSky();
         this.interval = setInterval(fetchOpenSky, 15000);
-    }
-
-    generateMockData() {
-        if (!this.bounds) return;
-
-        const { lamin, lomin, lamax, lomax } = this.bounds;
-
-        if (this.mockPlanes.length === 0) {
-            for (let i = 0; i < 10; i++) {
-                this.mockPlanes.push({
-                    id: `plane-mock-${1000 + i}`,
-                    callsign: `BAW${Math.floor(Math.random() * 900) + 100}`,
-                    lat: lamin + (lamax - lamin) * Math.random(),
-                    lng: lomin + (lomax - lomin) * Math.random(),
-                    heading: Math.random() * 360,
-                    speed: (lamax - lamin) * 0.01 // Scale speed to bounds
-                });
-            }
-        }
-
-        this.mockPlanes.forEach(plane => {
-            plane.lat += Math.cos(plane.heading * (Math.PI / 180)) * plane.speed;
-            plane.lng += Math.sin(plane.heading * (Math.PI / 180)) * plane.speed;
-            plane.heading += (Math.random() - 0.5) * 5;
-
-            // Boundary bouncing
-            if (plane.lat > lamax || plane.lat < lamin || plane.lng > lomax || plane.lng < lomin) {
-                plane.heading = (plane.heading + 180) % 360;
-            }
-
-            this.io.emit('entity-update', {
-                id: plane.id,
-                type: 'aircraft',
-                lat: plane.lat,
-                lng: plane.lng,
-                callsign: plane.callsign,
-                heading: plane.heading,
-                route: this.getRoute(plane.callsign),
-                timestamp: Date.now()
-            });
-        });
     }
 
     getRoute(callsign) {
@@ -127,7 +82,6 @@ class OpenSkyService {
             this.interval = null;
         }
         this.bounds = null;
-        this.mockPlanes = [];
     }
 }
 
