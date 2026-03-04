@@ -88,6 +88,8 @@ function updateServices(coords) {
 
     console.log(`Starting services for area: [${lamin}, ${lomin}] to [${lamax}, ${lomax}]`);
 
+    io.emit('clear-entities');
+
     aisStream.start(lamin, lomin, lamax, lomax);
     openSky.start(lamin, lomin, lamax, lomax);
     gdelt.start((lamin + lamax) / 2, (lomin + lomax) / 2);

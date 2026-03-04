@@ -6,7 +6,7 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5001';
 
 export interface Entity {
     id: string;
-    type: 'aircraft' | 'vessel' | 'security' | 'operative';
+    type: 'aircraft' | 'vessel' | 'security' | 'operative' | 'weather';
     lat: number;
     lng: number;
     speed?: number;
@@ -61,7 +61,15 @@ export const useWebSocket = () => {
         });
 
         newSocket.on('clear-entities', () => {
-            setEntities({});
+            setEntities(prev => {
+                const updated: Record<string, Entity> = {};
+                for (const key in prev) {
+                    if (prev[key].type === 'weather') {
+                        updated[key] = prev[key];
+                    }
+                }
+                return updated;
+            });
         });
 
         newSocket.on('disconnect', () => {
