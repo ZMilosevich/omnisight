@@ -40,6 +40,7 @@ const BaseMap: React.FC<BaseMapProps> = ({ entities, socket }) => {
 
     const [bounds, setBounds] = React.useState<[number, number, number, number] | null>(null);
     const [zoom, setZoom] = React.useState(9);
+    const [zoomError, setZoomError] = React.useState<string | null>(null);
 
     useEffect(() => {
         socketRef.current = socket;
@@ -72,14 +73,27 @@ const BaseMap: React.FC<BaseMapProps> = ({ entities, socket }) => {
             draw.current = new MapboxDrawConstructor({
                 displayControlsDefault: false,
                 controls: {
-                    polygon: true
+                    polygon: false
                 },
-                defaultMode: 'simple_select'
+                defaultMode: 'draw_polygon'
             });
             map.current.addControl(draw.current as unknown as mapboxgl.IControl, 'bottom-left');
 
             map.current.on('draw.create', () => {
-                if (!draw.current) return;
+                if (!draw.current || !map.current) return;
+
+                const currentZoom = map.current.getZoom();
+                if (currentZoom < 11) {
+                    setZoomError('COMMAND: ZOOM IN TO DEFINE TACTICAL PERIMETER');
+                    draw.current.deleteAll();
+                    // Re-arm the tool
+                    setTimeout(() => {
+                        if (draw.current) draw.current.changeMode('draw_polygon');
+                    }, 100);
+                    setTimeout(() => setZoomError(null), 3000);
+                    return;
+                }
+
                 const data = draw.current.getAll();
                 if (data && data.features.length > 0) {
                     const feature = data.features[0];
@@ -91,6 +105,14 @@ const BaseMap: React.FC<BaseMapProps> = ({ entities, socket }) => {
                         }, 50);
                     }
                 }
+            });
+
+            map.current.on('moveend', () => {
+                const mapInstance = map.current;
+                if (!mapInstance) return;
+                const b = mapInstance.getBounds().toArray();
+                setBounds([b[0][0], b[0][1], b[1][0], b[1][1]]);
+                setZoom(mapInstance.getZoom());
             });
 
             map.current.on('load', () => {
@@ -235,11 +257,24 @@ const BaseMap: React.FC<BaseMapProps> = ({ entities, socket }) => {
             }
         }
 
-        // Ensure no MapboxDraw anomalies remain
         if (draw.current) {
             const internalData = draw.current.getAll();
             if (internalData.features.length > 0) {
                 draw.current.deleteAll();
+            }
+
+            // Auto-toggle drawing mode
+            if (!hasExternalZone) {
+                try {
+                    draw.current.changeMode('draw_polygon');
+                } catch (e) {
+                    console.warn('MapboxDraw mode change delayed:', e);
+                }
+            } else {
+                try {
+                    draw.current.changeMode('simple_select');
+                } catch (e) {
+                }
             }
         }
     }, [restrictedZoneCoords]);
@@ -445,32 +480,28 @@ const BaseMap: React.FC<BaseMapProps> = ({ entities, socket }) => {
                   </div>`
             : entity.type === 'aircraft'
                 ? `   <div class="flex justify-between items-center text-[10px] font-mono mb-1.5">
-                      <span class="text-white/30 uppercase tracking-tighter whitespace-nowrap">Reg.:</span>
-                      <span class="text-white font-medium text-right">${entity.country || 'N/A'}</span>
+                      <span class="text-white/30 uppercase tracking-tighter whitespace-nowrap">ICAO24:</span>
+                      <span class="text-white font-medium text-right font-mono tracking-widest">${(entity.id || '').replace('plane-', '').toUpperCase()}</span>
                   </div>
                   <div class="flex justify-between items-center text-[10px] font-mono mb-1.5">
-                      <span class="text-white/30 uppercase tracking-tighter whitespace-nowrap">Type code:</span>
-                      <span class="text-white font-medium text-right">n/a</span>
+                      <span class="text-white/30 uppercase tracking-tighter whitespace-nowrap">Country:</span>
+                      <span class="text-white font-medium text-right">${entity.country || 'Unknown'}</span>
                   </div>
                   <div class="flex justify-between items-center text-[10px] font-mono mb-1.5">
                       <span class="text-white/30 uppercase tracking-tighter whitespace-nowrap">Route:</span>
-                      <span class="text-white font-medium text-right">${entity.route || 'TRANSIT'}</span>
+                      <span class="text-white font-medium text-right">${entity.route && entity.route !== 'N/A' ? entity.route : 'Unknown'}</span>
                   </div>
                   <div class="flex justify-between items-center text-[10px] font-mono mb-1.5">
                       <span class="text-white/30 uppercase tracking-tighter">Altitude:</span>
-                      <span id="popup-altitude" class="text-white font-medium">${(entity.altitude !== undefined && entity.altitude !== null) ? `<span class="text-[8px] text-white/50 mr-1">▼</span>${Math.round(entity.altitude)} ft` : 'n/a'}</span>
+                      <span id="popup-altitude" class="text-white font-medium">${(entity.altitude !== undefined && entity.altitude !== null && entity.altitude > 0) ? `${Math.round(entity.altitude).toLocaleString()} ft` : 'n/a'}</span>
                   </div>
                   <div class="flex justify-between items-center text-[10px] font-mono mb-1.5">
                       <span class="text-white/30 uppercase tracking-tighter">Speed:</span>
-                      <span id="popup-speed" class="text-white font-medium">${(entity.speed !== undefined && entity.speed !== null) ? Math.round(entity.speed) + ' kt' : 'n/a'}</span>
-                  </div>
-                  <div class="flex justify-between items-center text-[10px] font-mono mb-1.5">
-                      <span class="text-white/30 uppercase tracking-tighter whitespace-nowrap">Source:</span>
-                      <span class="text-white font-medium text-right">ADS-B</span>
+                      <span id="popup-speed" class="text-white font-medium">${(entity.speed !== undefined && entity.speed !== null && entity.speed > 0) ? Math.round(entity.speed) + ' kt' : 'n/a'}</span>
                   </div>
                   <div class="flex justify-between items-center text-[10px] font-mono">
-                      <span class="text-white/30 uppercase tracking-tighter whitespace-nowrap">RSSI:</span>
-                      <span class="text-white font-medium text-right">-3.5 dBFS</span>
+                      <span class="text-white/30 uppercase tracking-tighter whitespace-nowrap">Source:</span>
+                      <span class="text-blue-400 font-medium text-right font-bold">ADS-B / OpenSky</span>
                   </div>`
                 : entity.type === 'vessel'
                     ? `   
@@ -547,10 +578,10 @@ const BaseMap: React.FC<BaseMapProps> = ({ entities, socket }) => {
                 if (headingEl) headingEl.textContent = entity.heading !== undefined && entity.heading < 360 ? `${Math.round(entity.heading)}°` : 'N/A';
 
                 const speedEl = el.querySelector('#popup-speed');
-                if (speedEl) speedEl.textContent = (entity.speed !== undefined && entity.speed !== null) ? `${Math.round(entity.speed)} kt` : 'n/a';
+                if (speedEl) speedEl.textContent = (entity.speed !== undefined && entity.speed !== null && entity.speed > 0) ? `${Math.round(entity.speed)} kt` : 'n/a';
 
                 const altitudeEl = el.querySelector('#popup-altitude');
-                if (altitudeEl) altitudeEl.innerHTML = (entity.altitude !== undefined && entity.altitude !== null) ? `<span class="text-[8px] text-white/50 mr-1">▼</span>${Math.round(entity.altitude)} ft` : 'n/a';
+                if (altitudeEl) altitudeEl.textContent = (entity.altitude !== undefined && entity.altitude !== null && entity.altitude > 0) ? `${Math.round(entity.altitude).toLocaleString()} ft` : 'n/a';
 
                 if (entity.type === 'operative') {
                     const bpmEl = el.querySelector('#popup-bpm');
@@ -627,6 +658,27 @@ const BaseMap: React.FC<BaseMapProps> = ({ entities, socket }) => {
                 className="absolute inset-0 w-full h-full"
                 style={{ minHeight: '100%' }}
             />
+
+            {/* Tactical Zoom Warning Overlay */}
+            {zoomError && (
+                <div className="absolute inset-0 pointer-events-none z-[1000] flex items-center justify-center">
+                    <div className="px-8 py-4 bg-red-950/40 backdrop-blur-md border-y border-red-500/50 w-full flex items-center justify-center gap-4 animate-in fade-in zoom-in duration-300">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-red-500 animate-pulse">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        <span className="text-sm font-mono font-black text-red-100 tracking-[0.3em] uppercase">
+                            {zoomError}
+                        </span>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-red-500 animate-pulse">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                    </div>
+                </div>
+            )}
 
             {/* Overlay for no token warning */}
             {!import.meta.env.VITE_MAPBOX_TOKEN && (

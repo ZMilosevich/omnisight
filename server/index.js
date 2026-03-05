@@ -40,7 +40,7 @@ function isPointInPolygon(point, vs) {
 }
 
 // Global reactive state
-let RESTRICTED_ZONE_COORDS = [];
+let RESTRICTED_ZONE_COORDS = [[-0.5, 51.3], [0.3, 51.3], [0.3, 51.7], [-0.5, 51.7], [-0.5, 51.3]];
 
 const ioWrapper = {
   emit: (event, data) => {
@@ -147,6 +147,8 @@ setInterval(() => {
   console.log(`GDELT: ${gdelt.interval ? 'Active' : 'Idle'}`);
   console.log(`-----------------------`);
 }, 30000);
+
+updateServices(RESTRICTED_ZONE_COORDS);
 
 server.listen(PORT, () => {
   console.log(`Dispatcher listening on port ${PORT}`);

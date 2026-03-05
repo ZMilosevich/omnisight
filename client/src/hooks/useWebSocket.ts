@@ -13,6 +13,8 @@ export interface Entity {
     heading?: number;
     callsign?: string;
     route?: string;
+    country?: string;
+    altitude?: number;
     title?: string;
     severity?: 'low' | 'medium' | 'high';
     // Operative Specific

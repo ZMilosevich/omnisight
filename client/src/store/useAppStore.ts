@@ -6,15 +6,18 @@ interface AppState {
     activeLayers: Set<LayerType>;
     selectedEntityId: string | null;
     restrictedZoneCoords: number[][] | null;
+    isIntelPanelOpen: boolean;
     toggleLayer: (layer: LayerType) => void;
     setSelectedEntityId: (id: string | null) => void;
     setRestrictedZoneCoords: (coords: number[][]) => void;
+    setIntelPanelOpen: (open: boolean) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
     activeLayers: new Set(['Transit', 'Security', 'Environment', 'Operatives']), // All on by default
     selectedEntityId: null,
     restrictedZoneCoords: null,
+    isIntelPanelOpen: false,
 
     toggleLayer: (layer) => set((state) => {
         const next = new Set(state.activeLayers);
@@ -28,4 +31,5 @@ export const useAppStore = create<AppState>((set) => ({
 
     setSelectedEntityId: (id) => set({ selectedEntityId: id }),
     setRestrictedZoneCoords: (coords) => set({ restrictedZoneCoords: coords }),
+    setIntelPanelOpen: (open) => set({ isIntelPanelOpen: open }),
 }));

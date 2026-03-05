@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useWebSocket } from './hooks/useWebSocket';
 import BaseMap from './components/map/BaseMap';
 import IntelPanel from './components/panel/IntelPanel';
+import AIOverview from './components/panel/AIOverview';
 import LayerToggle from './components/controls/LayerToggle';
 import Login from './components/auth/Login';
 import { useAppStore } from './store/useAppStore';
@@ -10,6 +11,7 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const { isConnected, entities, socket } = useWebSocket();
   const restrictedZoneCoords = useAppStore(state => state.restrictedZoneCoords);
+  const isIntelPanelOpen = useAppStore(state => state.isIntelPanelOpen);
 
   if (!isAuthenticated) {
     return <Login onLogin={() => setIsAuthenticated(true)} />;
@@ -58,8 +60,13 @@ function App() {
         </span>
       </div>
 
-      {/* Intelligence Feed Side Panel - Floating Overlay */}
-      <aside className={`absolute top-8 right-8 bottom-8 w-[380px] z-10 border border-white/10 bg-[#0a0a0a]/80 backdrop-blur-xl rounded-[32px] overflow-hidden shadow-2xl transition-transform duration-700 delay-150 ease-[cubic-bezier(0.16,1,0.3,1)] ${hasData ? 'translate-x-0' : 'translate-x-[120%]'}`}>
+      {/* AI Intelligence Left Panel */}
+      <aside className={`absolute top-24 left-8 bottom-[180px] w-[340px] z-999 border border-white/10 bg-[#0a0a0a]/80 backdrop-blur-xl rounded-[32px] overflow-hidden shadow-2xl transition-transform duration-700 delay-100 ease-[cubic-bezier(0.16,1,0.3,1)] ${hasData ? 'translate-x-0' : 'translate-x-[-120%]'}`}>
+        <AIOverview entities={entities} />
+      </aside>
+
+      {/* Intelligence Feed Right Panel */}
+      <aside className={`absolute top-8 right-8 bottom-8 w-[380px] z-999 border border-white/10 bg-[#0a0a0a]/80 backdrop-blur-xl rounded-[32px] overflow-hidden shadow-2xl transition-transform duration-700 delay-150 ease-[cubic-bezier(0.16,1,0.3,1)] ${(hasData && isIntelPanelOpen) ? 'translate-x-0' : 'translate-x-[120%]'}`}>
         <IntelPanel entities={entities} />
       </aside>
     </div>

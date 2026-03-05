@@ -5,14 +5,65 @@ class OpenSkyService {
         this.io = io;
         this.interval = null;
         this.bounds = null; // { lamin, lomin, lamax, lomax }
+        this.mockAircraft = [];
     }
 
     start(lamin, lomin, lamax, lomax) {
         this.stop();
         this.bounds = { lamin, lomin, lamax, lomax };
 
+        // Initialize mock aircraft within the bounds
+        const airlinePrefixes = ['BAW', 'AFR', 'DLH', 'UAE', 'QFA', 'AAL', 'UAL', 'DAL'];
+        this.mockAircraft = Array.from({ length: 5 }).map((_, i) => {
+            const callsign = `${airlinePrefixes[Math.floor(Math.random() * airlinePrefixes.length)]}${Math.floor(Math.random() * 9000) + 100}`;
+            return {
+                id: `mock-plane-${i}`,
+                callsign,
+                lat: lamin + (lamax - lamin) * Math.random(),
+                lng: lomin + (lomax - lomin) * Math.random(),
+                heading: Math.random() * 360,
+                speed: 400 + Math.random() * 200, // Knots
+                altitude: 30000 + Math.floor(Math.random() * 10000),
+                country: 'Mockland'
+            };
+        });
+
         const fetchOpenSky = async () => {
             if (!this.bounds) return;
+
+            // Update and emit mock aircraft
+            this.mockAircraft.forEach(plane => {
+                // Movement: degrees per second (approximate)
+                // 1 degree lat is approx 60 nautical miles. 
+                // Speed is in knots (nm/hr). So nm/sec = speed / 3600.
+                // Lat change = (cos(heading) * speed / 3600) / 60
+                const speedDegPerSec = (plane.speed / 3600) / 60;
+                const updateIntervalSec = 15;
+
+                plane.lat += Math.cos(plane.heading * (Math.PI / 180)) * speedDegPerSec * updateIntervalSec;
+                plane.lng += Math.sin(plane.heading * (Math.PI / 180)) * speedDegPerSec * updateIntervalSec;
+
+                // Wrap around or bounce (simple wrap for now)
+                if (plane.lat > this.bounds.lamax) plane.lat = this.bounds.lamin;
+                if (plane.lat < this.bounds.lamin) plane.lat = this.bounds.lamax;
+                if (plane.lng > this.bounds.lomax) plane.lng = this.bounds.lomin;
+                if (plane.lng < this.bounds.lomin) plane.lng = this.bounds.lomax;
+
+                this.io.emit('entity-update', {
+                    id: plane.id,
+                    type: 'aircraft',
+                    lat: plane.lat,
+                    lng: plane.lng,
+                    callsign: plane.callsign,
+                    heading: plane.heading,
+                    country: plane.country,
+                    route: this.getRoute(plane.callsign),
+                    altitude: plane.altitude,
+                    speed: plane.speed,
+                    timestamp: Date.now(),
+                    isMock: true
+                });
+            });
 
             try {
                 const response = await axios.get(`https://opensky-network.org/api/states/all?lamin=${this.bounds.lamin}&lomin=${this.bounds.lomin}&lamax=${this.bounds.lamax}&lomax=${this.bounds.lomax}`, { timeout: 10000 });
@@ -46,7 +97,7 @@ class OpenSkyService {
                     return;
                 }
             } catch (error) {
-                console.log('OpenSky API offline or rate limited. Waiting for next polling cycle.');
+                console.log('OpenSky API offline or rate limited. Using mock data only.');
             }
         };
 
@@ -91,6 +142,7 @@ class OpenSkyService {
             this.interval = null;
         }
         this.bounds = null;
+        this.mockAircraft = [];
     }
 }
 
