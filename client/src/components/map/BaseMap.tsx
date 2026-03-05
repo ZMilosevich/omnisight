@@ -269,7 +269,7 @@ const BaseMap: React.FC<BaseMapProps> = ({ entities, socket }) => {
         if (entity) {
             map.current.flyTo({
                 center: [entity.lng, entity.lat],
-                zoom: 14,
+                zoom: 17,
                 speed: 1.5,
                 curve: 1.42,
                 essential: true // this animation is considered essential with respect to prefers-reduced-motion

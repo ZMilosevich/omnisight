@@ -135,6 +135,7 @@ const IntelPanel: React.FC<IntelPanelProps> = ({ entities }) => {
                         params.api.autoSizeAllColumns();
                     }}
                     rowSelection="single"
+                    getRowStyle={() => ({ cursor: 'pointer' })}
                     onRowClicked={(e) => {
                         if (e.data) {
                             // If re-clicking the SAME selected entity, reset it to trigger a map zoom/popup refresh
