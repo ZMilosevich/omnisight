@@ -73,23 +73,35 @@ const BaseMap: React.FC<BaseMapProps> = ({ entities, socket }) => {
             draw.current = new MapboxDrawConstructor({
                 displayControlsDefault: false,
                 controls: {
-                    polygon: false
+                    polygon: true,
+                    trash: true
                 },
                 defaultMode: 'draw_polygon'
             });
             map.current.addControl(draw.current as unknown as mapboxgl.IControl, 'bottom-left');
 
-            map.current.on('draw.create', () => {
+            map.current.on('draw.create', (e: any) => {
                 if (!draw.current || !map.current) return;
 
                 const currentZoom = map.current.getZoom();
                 if (currentZoom < 11) {
                     setZoomError('COMMAND: ZOOM IN TO DEFINE TACTICAL PERIMETER');
-                    draw.current.deleteAll();
-                    // Re-arm the tool
+
+                    if (e.features && e.features.length > 0) {
+                        draw.current.delete(e.features.map((f: any) => f.id));
+                    } else {
+                        draw.current.deleteAll();
+                    }
+
+                    // Re-arm the tool safely after internal state settles
                     setTimeout(() => {
-                        if (draw.current) draw.current.changeMode('draw_polygon');
-                    }, 100);
+                        try {
+                            if (draw.current) draw.current.changeMode('draw_polygon');
+                        } catch (err) {
+                            console.error('Failed to rearm polygon mode:', err);
+                        }
+                    }, 300);
+
                     setTimeout(() => setZoomError(null), 3000);
                     return;
                 }

@@ -66,6 +66,12 @@ body {
   filter: invert(1) brightness(0.75) !important;
 }
 
+/* Hide polygon + trash draw buttons — we use auto draw mode instead */
+.mapbox-gl-draw_polygon,
+.mapbox-gl-draw_trash {
+  display: none !important;
+}
+
 .mapboxgl-ctrl-group button:hover {
   background-color: #222222 !important;
 }
