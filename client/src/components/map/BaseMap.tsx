@@ -458,11 +458,11 @@ const BaseMap: React.FC<BaseMapProps> = ({ entities, socket }) => {
                   </div>
                   <div class="flex justify-between items-center text-[10px] font-mono mb-1.5">
                       <span class="text-white/30 uppercase tracking-tighter">Altitude:</span>
-                      <span id="popup-altitude" class="text-white font-medium">${entity.altitude ? `<span class="text-[8px] text-white/50 mr-1">▼</span>${Math.round(entity.altitude)} ft` : 'n/a'}</span>
+                      <span id="popup-altitude" class="text-white font-medium">${(entity.altitude !== undefined && entity.altitude !== null) ? `<span class="text-[8px] text-white/50 mr-1">▼</span>${Math.round(entity.altitude)} ft` : 'n/a'}</span>
                   </div>
                   <div class="flex justify-between items-center text-[10px] font-mono mb-1.5">
                       <span class="text-white/30 uppercase tracking-tighter">Speed:</span>
-                      <span id="popup-speed" class="text-white font-medium">${entity.speed ? Math.round(entity.speed) + ' kt' : 'n/a'}</span>
+                      <span id="popup-speed" class="text-white font-medium">${(entity.speed !== undefined && entity.speed !== null) ? Math.round(entity.speed) + ' kt' : 'n/a'}</span>
                   </div>
                   <div class="flex justify-between items-center text-[10px] font-mono mb-1.5">
                       <span class="text-white/30 uppercase tracking-tighter whitespace-nowrap">Source:</span>
@@ -486,7 +486,7 @@ const BaseMap: React.FC<BaseMapProps> = ({ entities, socket }) => {
                   </div>
                   <div class="flex justify-between items-center text-[10px] font-mono mt-2">
                       <span class="text-white/30 uppercase tracking-tighter">Speed</span>
-                      <span id="popup-speed" class="text-white font-medium">${entity.speed ? entity.speed + ' kt' : 'n/a'}</span>
+                      <span id="popup-speed" class="text-white font-medium">${(entity.speed !== undefined && entity.speed !== null) ? Math.round(entity.speed) + ' kt' : 'n/a'}</span>
                   </div>
                   <div class="flex justify-between items-center text-[10px] font-mono">
                       <span class="text-white/30 uppercase tracking-tighter">Status</span>
@@ -547,10 +547,10 @@ const BaseMap: React.FC<BaseMapProps> = ({ entities, socket }) => {
                 if (headingEl) headingEl.textContent = entity.heading !== undefined && entity.heading < 360 ? `${Math.round(entity.heading)}°` : 'N/A';
 
                 const speedEl = el.querySelector('#popup-speed');
-                if (speedEl) speedEl.textContent = entity.speed ? `${entity.speed} kt` : 'n/a';
+                if (speedEl) speedEl.textContent = (entity.speed !== undefined && entity.speed !== null) ? `${Math.round(entity.speed)} kt` : 'n/a';
 
                 const altitudeEl = el.querySelector('#popup-altitude');
-                if (altitudeEl) altitudeEl.innerHTML = entity.altitude ? `<span class="text-[8px] text-white/50 mr-1">▼</span>${entity.altitude} ft` : 'n/a';
+                if (altitudeEl) altitudeEl.innerHTML = (entity.altitude !== undefined && entity.altitude !== null) ? `<span class="text-[8px] text-white/50 mr-1">▼</span>${Math.round(entity.altitude)} ft` : 'n/a';
 
                 if (entity.type === 'operative') {
                     const bpmEl = el.querySelector('#popup-bpm');

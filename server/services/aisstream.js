@@ -53,7 +53,7 @@ class AisStreamService {
                         lat: positionReport.Latitude,
                         lng: positionReport.Longitude,
                         callsign: callsign,
-                        speed: positionReport.Sog || 0,
+                        speed: (positionReport.Sog !== undefined ? positionReport.Sog : (positionReport.sog !== undefined ? positionReport.sog : 0)),
                         heading: positionReport.TrueHeading || 0,
                         timestamp: Date.now()
                     });
