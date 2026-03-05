@@ -55,7 +55,7 @@ function App() {
       {/* App Branding & Connection Status */}
       <div className="absolute top-8 left-8 z-50 flex items-center gap-6">
         <div className="flex items-center gap-3">
-          <h1 className="text-3xl font-black italic tracking-tighter text-white uppercase drop-shadow-3xl">
+          <h1 className="text-3xl font-black italic tracking-tighter uppercase bg-gradient-to-b from-white via-slate-200 to-slate-400 bg-clip-text text-transparent drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">
             OMNISIGHT
           </h1>
         </div>

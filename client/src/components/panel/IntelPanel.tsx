@@ -78,7 +78,7 @@ const IntelPanel: React.FC<IntelPanelProps> = ({ entities }) => {
             <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-3">
                     <div className={`w-2 h-2 rounded-full ${activeCount > 0 ? 'bg-blue-500 animate-pulse' : 'bg-white/20'} shadow-[0_0_10px_rgba(59,130,246,0.5)]`} />
-                    <h2 className="text-2xl font-bold tracking-tight text-white uppercase italic">Intel Center</h2>
+                    <h2 className="text-xl font-bold tracking-tight text-slate-400 uppercase">Intel Center</h2>
                 </div>
                 <div className={`px-3 py-1 ${activeCount > 0 ? 'bg-blue-500/10 border-blue-500/30 text-blue-400' : 'bg-white/5 border-white/10 text-white/40'} border rounded text-[10px] font-bold uppercase tracking-widest leading-none`}>
                     {activeCount > 0 ? 'Live Streaming' : 'Waiting for AOI'}
