@@ -223,7 +223,7 @@ const BaseMap: React.FC<BaseMapProps> = ({ entities, socket }) => {
                             ['==', ['get', 'congestion'], 'severe'], '#ef4444',
                             '#22c55e'
                         ],
-                        'line-opacity': 0.8
+                        'line-opacity': 0.75
                     }
                 }, 'restricted-zone-fill'); // Put traffic under the zone fill for better blending
             });
