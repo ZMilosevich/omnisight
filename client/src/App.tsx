@@ -52,12 +52,27 @@ function App() {
         )}
       </div>
 
-      {/* Connection Status Indicator - Over the map */}
-      <div className="absolute top-8 left-8 z-50 flex items-center gap-2 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
-        <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
-        <span className="text-[10px] font-mono uppercase tracking-widest text-white/70">
-          {isConnected ? 'Link Active' : 'Link Offline'}
-        </span>
+      {/* App Branding & Connection Status */}
+      <div className="absolute top-8 left-8 z-50 flex items-center gap-6">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-white flex items-center justify-center rounded-lg shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="rotate-45">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <line x1="12" y1="8" x2="12" y2="16" />
+              <line x1="8" y1="12" x2="16" y2="12" />
+            </svg>
+          </div>
+          <h1 className="text-xl font-bold tracking-[0.4em] text-white drop-shadow-2xl">
+            OMNISIGHT
+          </h1>
+        </div>
+
+        <div className="flex items-center gap-2 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+          <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
+          <span className="text-[10px] font-mono uppercase tracking-widest text-white/70">
+            {isConnected ? 'Link Active' : 'Link Offline'}
+          </span>
+        </div>
       </div>
 
       {/* AI Intelligence Left Panel */}
