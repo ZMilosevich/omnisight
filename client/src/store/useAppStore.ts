@@ -14,7 +14,7 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set) => ({
-    activeLayers: new Set(['Transit', 'Security', 'Environment', 'Operatives']), // All on by default
+    activeLayers: new Set(['Transit', 'Security', 'Operatives']), // Environment off by default
     selectedEntityId: null,
     restrictedZoneCoords: null,
     isIntelPanelOpen: false,
