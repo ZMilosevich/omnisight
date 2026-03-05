@@ -104,7 +104,7 @@ const AIOverview: React.FC<AIOverviewProps> = ({ entities }) => {
                     <Sparkles className="w-5 h-5 text-blue-400 animate-pulse" />
                 </div>
                 <div>
-                    <h2 className="text-xl font-bold text-slate-400 ">INTELLIGENCE OFFICER</h2>
+                    <h2 className="text-md font-bold text-slate-400 ">INTELLIGENCE OFFICER</h2>
                     <p className="text-[10px] font-mono text-blue-400/60 uppercase tracking-widest font-bold">AI OVERVIEW LAYER 01</p>
                 </div>
             </div>
@@ -131,7 +131,7 @@ const AIOverview: React.FC<AIOverviewProps> = ({ entities }) => {
             {/* AI Report Body */}
             <div className="flex-grow relative group cursor-default">
                 <div className="absolute inset-0 bg-blue-500/5 rounded-2xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="relative h-full bg-[#0a0a0a]/60 border border-white/10 rounded-2xl p-5 font-mono text-sm leading-relaxed overflow-y-auto custom-scrollbar shadow-inner">
+                <div className="relative h-full bg-[#0a0a0a]/60 border border-white/10 rounded-2xl p-5 font-mono text-xs leading-relaxed overflow-y-auto custom-scrollbar shadow-inner">
                     {isTyping ? (
                         <div className="flex flex-col gap-2">
                             <div className="h-4 bg-white/10 rounded animate-pulse w-3/4" />

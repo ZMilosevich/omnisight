@@ -50,7 +50,7 @@ const IntelPanel: React.FC<IntelPanelProps> = ({ entities }) => {
             cellRenderer: (params: any) => {
                 if (params.value === 'INCIDENT') {
                     return (
-                        <div className="bg-red-600 text-white px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider leading-tight">
+                        <div className="bg-red-600 text-white px-2 py-1.5 rounded text-[10px] font-bold uppercase tracking-wider leading-tight">
                             {params.value}
                         </div>
                     );
@@ -78,7 +78,7 @@ const IntelPanel: React.FC<IntelPanelProps> = ({ entities }) => {
             <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-3">
                     <div className={`w-2 h-2 rounded-full ${activeCount > 0 ? 'bg-blue-500 animate-pulse' : 'bg-white/20'} shadow-[0_0_10px_rgba(59,130,246,0.5)]`} />
-                    <h2 className="text-xl font-bold tracking-tight text-slate-400 uppercase">Intel Center</h2>
+                    <h2 className="text-md font-bold tracking-tight text-slate-400 uppercase">Intel Center</h2>
                 </div>
                 <div className={`px-3 py-1 ${activeCount > 0 ? 'bg-blue-500/10 border-blue-500/30 text-blue-400' : 'bg-white/5 border-white/10 text-white/40'} border rounded text-[10px] font-bold uppercase tracking-widest leading-none`}>
                     {activeCount > 0 ? 'Live Streaming' : 'Waiting for AOI'}
@@ -110,6 +110,7 @@ const IntelPanel: React.FC<IntelPanelProps> = ({ entities }) => {
                     '--ag-row-hover-color': '#1a1a1a',
                     '--ag-selected-row-background-color': '#222222',
                     '--ag-font-family': 'monospace',
+                    '--ag-font-size': '12px',
                     '--ag-cell-horizontal-padding': '8px',
                     '--ag-header-column-separator-display': 'block',
                     '--ag-header-column-separator-color': 'rgba(255,255,255,0.05)',
