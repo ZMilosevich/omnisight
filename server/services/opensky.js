@@ -20,8 +20,11 @@ class OpenSkyService {
                     response.data.states.forEach(state => {
                         const icao24 = state[0];
                         const callsign = state[1] ? state[1].trim() : `ICAO-${icao24}`;
+                        const originCountry = state[2] || 'Unknown';
                         const lng = state[5];
                         const lat = state[6];
+                        const baro_altitude = state[7];
+                        const velocity = state[9];
                         const heading = state[10] || 0;
 
                         if (lat !== null && lng !== null) {
@@ -32,7 +35,10 @@ class OpenSkyService {
                                 lng,
                                 callsign,
                                 heading,
+                                country: originCountry,
                                 route: this.getRoute(callsign),
+                                altitude: baro_altitude ? Math.floor(baro_altitude * 3.28084) : 0,
+                                speed: velocity ? Math.floor(velocity * 1.94384) : 0,
                                 timestamp: Date.now()
                             });
                         }
@@ -49,31 +55,34 @@ class OpenSkyService {
     }
 
     getRoute(callsign) {
-        if (!callsign) return 'Unknown - Unknown';
+        if (!callsign || callsign.startsWith('ICAO')) return 'N/A';
 
         const prefix = callsign.substring(0, 3).toUpperCase();
         const routes = {
-            'BAW': 'London (LHR) - New York (JFK)',
-            'DLH': 'Frankfurt (FRA) - Istanbul (IST)',
-            'AFR': 'Paris (CDG) - Tokyo (HND)',
-            'THY': 'Istanbul (IST) - London (LHR)',
-            'UAE': 'Dubai (DXB) - Paris (CDG)',
-            'QFA': 'Sydney (SYD) - London (LHR)',
-            'AAL': 'New York (JFK) - Los Angeles (LAX)',
-            'FIN': 'Helsinki (HEL) - Singapore (SIN)',
-            'KLM': 'Amsterdam (AMS) - Nairobi (NBO)',
-            'SAS': 'Copenhagen (CPH) - Chicago (ORD)'
+            'ASA': 'SEA-JFK',
+            'BAW': 'LHR-JFK',
+            'DLH': 'FRA-IST',
+            'AFR': 'CDG-HND',
+            'THY': 'IST-LHR',
+            'UAE': 'DXB-CDG',
+            'QFA': 'SYD-LHR',
+            'AAL': 'JFK-LAX',
+            'FIN': 'HEL-SIN',
+            'KLM': 'AMS-NBO',
+            'SAS': 'CPH-ORD',
+            'UAL': 'SFO-EWR',
+            'DAL': 'ATL-LHR'
         };
-
         if (routes[prefix]) return routes[prefix];
 
-        // Fallback generator for other callsigns
-        const cities = ['London', 'Paris', 'Berlin', 'Madrid', 'Rome', 'Istanbul', 'New York', 'Tokyo', 'Dubai', 'Singapore'];
-        const origin = cities[Math.floor(Math.abs(Math.sin(callsign.split('').reduce((a, b) => a + b.charCodeAt(0), 0))) * cities.length)];
-        let destination = cities[Math.floor(Math.abs(Math.cos(callsign.split('').reduce((a, b) => a + b.charCodeAt(0), 0))) * cities.length)];
-        if (origin === destination) destination = 'Zurich';
+        // Standard randomized generator 
+        const cities = ['LHR', 'CDG', 'FRA', 'MAD', 'FCO', 'IST', 'JFK', 'HND', 'DXB', 'SIN', 'LAX', 'SYD'];
+        const seedCode = callsign.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+        const origin = cities[Math.floor(Math.abs(Math.sin(seedCode)) * cities.length)];
+        let destination = cities[Math.floor(Math.abs(Math.cos(seedCode)) * cities.length)];
+        if (origin === destination) destination = 'ZRH';
 
-        return `${origin} - ${destination}`;
+        return `${origin}-${destination}`;
     }
 
     stop() {
