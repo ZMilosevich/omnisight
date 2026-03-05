@@ -473,7 +473,7 @@ const BaseMap: React.FC<BaseMapProps> = ({ entities, socket }) => {
                           <span class="text-white/30 uppercase tracking-tighter whitespace-nowrap mt-0.5">Objective:</span>
                           <span id="popup-objective" class="text-white/80 font-bold text-right tracking-tight leading-snug">${entity.missionObjective || 'Awaiting Orders'}</span>
                       </div>
-                      <button id="comms-btn" class="w-full mt-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/50 rounded text-[10px] font-mono font-bold text-emerald-400 transition-colors uppercase tracking-widest flex items-center justify-center gap-2">
+                      <button id="comms-btn" class="w-full mt-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/50 rounded text-[10px] font-mono font-bold text-emerald-400 transition-colors uppercase tracking-widest flex items-center justify-center gap-2 cursor-pointer">
                          <span id="comms-text" class="flex items-center justify-center gap-2">
                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
                              INITIATE COMMS
@@ -630,11 +630,11 @@ const BaseMap: React.FC<BaseMapProps> = ({ entities, socket }) => {
                         reqBtn.classList.add('comm-active');
 
                         reqText.innerHTML = 'CONNECTING... <span class="animate-pulse">_</span>';
-                        reqBtn.className = 'w-full mt-3 py-1.5 bg-blue-500/20 border border-blue-500/50 rounded text-[10px] font-mono font-bold text-blue-400 transition-colors uppercase tracking-widest flex items-center justify-center gap-2 comm-active';
+                        reqBtn.className = 'w-full mt-3 py-1.5 bg-blue-500/20 border border-blue-500/50 rounded text-[10px] font-mono font-bold text-blue-400 transition-colors uppercase tracking-widest flex items-center justify-center gap-2 comm-active cursor-pointer';
 
                         setTimeout(() => {
                             reqText.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> LINK SECURE';
-                            reqBtn.className = 'w-full mt-3 py-1.5 bg-emerald-500/40 shadow-[0_0_15px_rgba(16,185,129,0.3)] border border-emerald-500/80 rounded text-[10px] font-mono font-bold text-white transition-colors uppercase tracking-widest flex items-center justify-center gap-2 comm-active';
+                            reqBtn.className = 'w-full mt-3 py-1.5 bg-emerald-500/40 shadow-[0_0_15px_rgba(16,185,129,0.3)] border border-emerald-500/80 rounded text-[10px] font-mono font-bold text-white transition-colors uppercase tracking-widest flex items-center justify-center gap-2 comm-active cursor-pointer';
                         }, 2000);
                     });
                 }
