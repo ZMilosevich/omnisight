@@ -10,16 +10,23 @@ const { startOpenWeather } = require('./services/openweather');
 const { GdeltService } = require('./services/gdelt');
 const { OperativeService } = require('./services/operative');
 
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "http://localhost:5173",
+  "https://omnisight-iota.vercel.app",
+  /https:\/\/omnisight.*\.vercel\.app$/
+].filter(Boolean);
+
 const app = express();
 app.use(cors({
-  origin: [process.env.CLIENT_URL, "http://localhost:5173", "https://omnisight-iota.vercel.app"].filter(Boolean),
+  origin: allowedOrigins,
   credentials: true
 }));
 
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: [process.env.CLIENT_URL, "http://localhost:5173", "https://omnisight-iota.vercel.app"].filter(Boolean),
+    origin: allowedOrigins,
     methods: ["GET", "POST"],
     credentials: true
   }
