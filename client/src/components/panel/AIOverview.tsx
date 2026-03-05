@@ -113,17 +113,17 @@ const AIOverview: React.FC<AIOverviewProps> = ({ entities }) => {
             <div className="grid grid-cols-3 gap-3 mb-6">
                 <div className="p-3 bg-white/[0.03] border border-white/5 rounded-xl text-center transform transition-all duration-500 hover:border-emerald-500/30">
                     <Plane className={`w-4 h-4 mx-auto mb-1 ${stats.aircraft > 0 ? 'text-emerald-400' : 'text-white/20'}`} />
-                    <div className="text-lg font-bold text-white">{stats.aircraft}</div>
+                    <div className="text-3xl font-bold text-white">{stats.aircraft}</div>
                     <div className="text-[8px] font-mono text-white/30 uppercase">Air</div>
                 </div>
                 <div className="p-3 bg-white/[0.03] border border-white/5 rounded-xl text-center transform transition-all duration-500 hover:border-blue-500/30">
                     <Users className={`w-4 h-4 mx-auto mb-1 ${stats.operatives > 0 ? 'text-blue-400' : 'text-white/20'}`} />
-                    <div className="text-lg font-bold text-white">{stats.operatives}</div>
+                    <div className="text-3xl font-bold text-white">{stats.operatives}</div>
                     <div className="text-[8px] font-mono text-white/30 uppercase">Ops</div>
                 </div>
                 <div className="p-3 bg-white/[0.03] border border-white/5 rounded-xl text-center transform transition-all duration-500 hover:border-red-500/30">
                     <AlertTriangle className={`w-4 h-4 mx-auto mb-1 ${stats.security > 0 ? 'text-red-400 animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.5)]' : 'text-white/20'}`} />
-                    <div className="text-lg font-bold text-white">{stats.security}</div>
+                    <div className="text-3xl font-bold text-white">{stats.security}</div>
                     <div className="text-[8px] font-mono text-white/30 uppercase">Alert</div>
                 </div>
             </div>
