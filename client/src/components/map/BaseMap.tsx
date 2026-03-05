@@ -110,7 +110,9 @@ const BaseMap: React.FC<BaseMapProps> = ({ entities, socket }) => {
             map.current.on('moveend', () => {
                 const mapInstance = map.current;
                 if (!mapInstance) return;
-                const b = mapInstance.getBounds().toArray();
+                const bounds = mapInstance.getBounds();
+                if (!bounds) return;
+                const b = bounds.toArray();
                 setBounds([b[0][0], b[0][1], b[1][0], b[1][1]]);
                 setZoom(mapInstance.getZoom());
             });
