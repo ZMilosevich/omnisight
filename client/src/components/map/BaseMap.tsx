@@ -180,6 +180,40 @@ const BaseMap: React.FC<BaseMapProps> = ({ entities, socket }) => {
                         'circle-blur': 2
                     }
                 });
+
+                // Add Official Mapbox Traffic Layer
+                map.current?.addSource('mapbox-traffic', {
+                    type: 'vector',
+                    url: 'mapbox://mapbox.mapbox-traffic-v1'
+                });
+
+                map.current?.addLayer({
+                    id: 'traffic-layer',
+                    type: 'line',
+                    source: 'mapbox-traffic',
+                    'source-layer': 'traffic',
+                    layout: {
+                        'visibility': activeLayers.has('Environment') ? 'visible' : 'none',
+                        'line-join': 'round',
+                        'line-cap': 'round'
+                    },
+                    paint: {
+                        'line-width': [
+                            'interpolate', ['linear'], ['zoom'],
+                            12, 1,
+                            16, 4
+                        ],
+                        'line-color': [
+                            'case',
+                            ['==', ['get', 'congestion'], 'low'], '#22c55e',
+                            ['==', ['get', 'congestion'], 'moderate'], '#eab308',
+                            ['==', ['get', 'congestion'], 'heavy'], '#f97316',
+                            ['==', ['get', 'congestion'], 'severe'], '#ef4444',
+                            '#22c55e'
+                        ],
+                        'line-opacity': 0.8
+                    }
+                }, 'restricted-zone-fill'); // Put traffic under the zone fill for better blending
             });
 
             // Update bounds on move
@@ -224,6 +258,13 @@ const BaseMap: React.FC<BaseMapProps> = ({ entities, socket }) => {
             if (map.current.getLayer('weather-layer')) {
                 map.current.setLayoutProperty(
                     'weather-layer',
+                    'visibility',
+                    activeLayers.has('Environment') ? 'visible' : 'none'
+                );
+            }
+            if (map.current.getLayer('traffic-layer')) {
+                map.current.setLayoutProperty(
+                    'traffic-layer',
                     'visibility',
                     activeLayers.has('Environment') ? 'visible' : 'none'
                 );
