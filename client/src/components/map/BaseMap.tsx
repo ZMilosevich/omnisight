@@ -476,12 +476,12 @@ const BaseMap: React.FC<BaseMapProps> = ({ entities, socket }) => {
                     ? `   
                   <div class="mb-3 relative overflow-hidden rounded border border-white/20 shadow-[0_4px_10px_rgba(0,0,0,0.5)] bg-black/50" style="height: 100px;">
                       <img src="${[
-                        'https://images.unsplash.com/photo-1545087593-199afb2f56b5?q=80&w=400&h=200&auto=format&fit=crop',
-                        'https://images.unsplash.com/photo-1588693836856-42ea2ea82470?q=80&w=400&h=200&auto=format&fit=crop',
-                        'https://images.unsplash.com/photo-1605273934399-5632a4e2baaa?q=80&w=400&h=200&auto=format&fit=crop',
-                        'https://images.unsplash.com/photo-1520692751336-3985eeb4e7eb?q=80&w=400&h=200&auto=format&fit=crop',
-                        'https://images.unsplash.com/photo-1578330541740-9b43ed3470cc?q=80&w=400&h=200&auto=format&fit=crop'
-                    ][(entity.id || '').split('').reduce((a, b) => a + b.charCodeAt(0), 0) % 5]}" class="w-full h-full object-cover filter brightness-75 contrast-110" />
+                        'https://images.pexels.com/photos/1575380/pexels-photo-1575380.jpeg?auto=compress&cs=tinysrgb&w=400&h=200&fit=crop',
+                        'https://images.pexels.com/photos/1117210/pexels-photo-1117210.jpeg?auto=compress&cs=tinysrgb&w=400&h=200&fit=crop',
+                        'https://images.pexels.com/photos/2144410/pexels-photo-2144410.jpeg?auto=compress&cs=tinysrgb&w=400&h=200&fit=crop',
+                        'https://images.pexels.com/photos/2884867/pexels-photo-2884867.jpeg?auto=compress&cs=tinysrgb&w=400&h=200&fit=crop',
+                        'https://images.pexels.com/photos/753331/pexels-photo-753331.jpeg?auto=compress&cs=tinysrgb&w=400&h=200&fit=crop'
+                    ][(entity.id || '').split('').reduce((a, b) => a + b.charCodeAt(0), 0) % 5]}" class="w-full h-full object-cover filter brightness-75 contrast-110" onerror="this.src='https://images.unsplash.com/photo-1544216717-3b95221d6f0b?q=80&w=400&h=200&auto=format&fit=crop'" />
                       <div class="absolute bottom-1 right-1 bg-black/80 px-1 py-0.5 text-[8px] font-mono text-white/50 border border-white/10 rounded">AIS DB FEED</div>
                   </div>
                   <div class="flex justify-between items-center text-[10px] font-mono mt-2">
