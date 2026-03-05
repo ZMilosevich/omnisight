@@ -104,7 +104,7 @@ const AIOverview: React.FC<AIOverviewProps> = ({ entities }) => {
                     <Sparkles className="w-5 h-5 text-blue-400 animate-pulse" />
                 </div>
                 <div>
-                    <h2 className="text-xl font-bold text-slate-400 ">Intelligence Officer</h2>
+                    <h2 className="text-xl font-bold text-slate-400 ">INTELLIGENCE OFFICER</h2>
                     <p className="text-[10px] font-mono text-blue-400/60 uppercase tracking-widest font-bold">AI OVERVIEW LAYER 01</p>
                 </div>
             </div>
