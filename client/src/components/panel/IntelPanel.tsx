@@ -124,6 +124,8 @@ const IntelPanel: React.FC<IntelPanelProps> = ({ entities }) => {
                     gridOptions={{
                         headerHeight: 40,
                         rowHeight: 60,
+                        suppressCellFocus: true,
+                        suppressRowClickSelection: false,
                     }}
                     alwaysShowHorizontalScroll={true}
                     onGridReady={(params) => {
@@ -133,7 +135,16 @@ const IntelPanel: React.FC<IntelPanelProps> = ({ entities }) => {
                         params.api.autoSizeAllColumns();
                     }}
                     rowSelection="single"
-                    onRowClicked={(e) => e.data && setSelectedEntityId(e.data.id)}
+                    onRowClicked={(e) => {
+                        if (e.data) {
+                            // If re-clicking the SAME selected entity, reset it to trigger a map zoom/popup refresh
+                            // or just set it to trigger the useEffect in BaseMap
+                            setSelectedEntityId(null);
+                            setTimeout(() => {
+                                setSelectedEntityId(e.data.id);
+                            }, 0);
+                        }
+                    }}
                 />
             </div>
 

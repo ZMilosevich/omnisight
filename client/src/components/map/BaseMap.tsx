@@ -261,6 +261,22 @@ const BaseMap: React.FC<BaseMapProps> = ({ entities, socket }) => {
         };
     }, []);
 
+    // Auto-fly to selected entity when it changes (either from map click or panel click)
+    useEffect(() => {
+        if (!map.current || !selectedEntityId) return;
+
+        const entity = entities[selectedEntityId];
+        if (entity) {
+            map.current.flyTo({
+                center: [entity.lng, entity.lat],
+                zoom: 14,
+                speed: 1.5,
+                curve: 1.42,
+                essential: true // this animation is considered essential with respect to prefers-reduced-motion
+            });
+        }
+    }, [selectedEntityId]);
+
     // Reactive layer visibility updates for map sources
     useEffect(() => {
         if (!map.current) return;
