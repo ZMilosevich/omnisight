@@ -69,7 +69,7 @@ function App() {
       </div>
 
       {/* AI Intelligence Left Panel */}
-      <aside className={`absolute top-24 left-8 bottom-[180px] w-[360px] z-999 border border-white/10 bg-[#0a0a0a]/80 backdrop-blur-xl rounded-[32px] overflow-hidden shadow-2xl transition-transform duration-700 delay-100 ease-[cubic-bezier(0.16,1,0.3,1)] ${hasData ? 'translate-x-0' : 'translate-x-[-120%]'}`}>
+      <aside className={`absolute top-24 left-8 bottom-[180px] w-[320px] z-9999 border border-white/10 bg-[#0a0a0a]/80 backdrop-blur-xl rounded-[32px] overflow-hidden shadow-2xl transition-transform duration-700 delay-100 ease-[cubic-bezier(0.16,1,0.3,1)] ${hasData ? 'translate-x-0' : 'translate-x-[-120%]'}`}>
         <AIOverview entities={entities} />
       </aside>
 
